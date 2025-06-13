@@ -1,0 +1,110 @@
+🚀 Build me a full-stack application (frontend + backend + API integration) called **"Crypto Intel Assistant"**. It should act as a powerful **crypto indicator dashboard and AI assistant**. The goal is to analyze coins, provide real-time and historical data, and help users make better trading decisions (analysis only – no real trading). Here's exactly what I want:
+
+---
+
+### ✅ 1. User Features:
+
+- Select one or more **crypto coins** (BTC, ETH, etc.)
+- Choose timeframe: 5min, 15min, 1h, 4h, 1d, 1w, 1mo
+- Choose indicator types and see live/visualized data:
+  - **Trend Indicators**
+    - Moving Averages (MA / EMA / SMA)
+    - MACD
+    - Ichimoku Cloud
+    - ADX
+  - **Momentum Indicators**
+    - RSI
+    - Stochastic RSI
+    - Momentum Oscillator
+  - **Volume-Based Indicators**
+    - Volume
+    - OBV (On-Balance Volume)
+    - Volume Profile
+  - **Volatility Indicators**
+    - Bollinger Bands
+    - ATR
+  - **Chart Patterns**
+    - Candlestick Patterns (Doji, Engulfing, Hammer)
+    - Price Structures (Head & Shoulders, Flags, Triangles)
+  - **Sentiment Indicators**
+    - Crypto Fear & Greed Index
+    - Funding Rates (on Futures)
+    - Open Interest
+    - Long/Short Ratio
+    - Liquidation Levels
+  - **On-Chain Indicators**
+    - Active Addresses
+    - Transaction Volume
+    - NVT Ratio
+    - Hash Rate
+    - MVRV Ratio
+    - Exchange Flows
+    - Whale Wallet Activity
+    - Stablecoin Supply Ratio
+  - **Advanced Tools**
+    - Wyckoff Method
+    - Elliott Wave Analysis
+    - Order Book Heatmap
+    - CVD (Cumulative Volume Delta)
+    - Gamma Exposure (Options)
+    - Market Depth Heatmaps
+
+---
+
+### ✅ 2. Display and UI Features:
+
+- Clean, responsive interface (React or Vue)
+- Charts for each indicator (Chart.js or D3.js)
+- Color-coded alerts: Bullish, Bearish, Neutral zones
+- Sidebar or dashboard widget showing:
+  - AI-generated **summary** for selected coin and timeframe
+  - AI **BUY/SELL suggestions** (purely analytical, not trading)
+  - Explanations of each indicator for beginners
+
+---
+
+### ✅ 3. AI Assistant:
+- Responds to questions like:
+  - "What does RSI say for ETH in 1h?"
+  - "What indicators agree on a bullish trend for BTC today?"
+  - "Where is the best buy zone for SOL right now?"
+- Summarizes the market situation in plain language
+- Recommends based on signals:
+  - Example: “Based on oversold RSI, low funding rate, and whale inflows, this may be a BUY zone.”
+  - Example: “MACD crossover + high MVRV suggests profit-taking; consider SELL.”
+
+---
+
+### ✅ 4. Data Source Integration:
+
+- Use APIs (combine multiple if needed):
+  - CoinGecko, CryptoCompare – Prices, technicals
+  - Binance/Bybit – Funding rates, OI, L/S ratio, order book
+  - Glassnode/Santiment – On-chain data
+  - Alternative.me – Fear & Greed Index
+
+- Fetch data periodically via schedulers
+- Use .env file for API keys and configs
+
+---
+
+### ✅ 5. Bonus Features (optional):
+- User profile to save favorite coins and indicator preferences
+- Dark/light mode
+- Alert system (popup or email if indicators meet conditions)
+- Export charts or summaries as PDF
+
+---
+
+### ✅ 6. Tech Stack Suggestion:
+- Frontend: React + Tailwind or Vue + Vuetify
+- Backend: Node.js (Express) or Spring Boot
+- DB (if needed): PostgreSQL or MongoDB
+- Charts: Chart.js or D3.js
+- AI: Rule-based logic for now; later upgrade to OpenAI API integration
+- Hosting: Vercel (frontend), Render/Fly.io (backend), or Docker full deployment
+
+---
+
+📦 Generate the full folder structure, sample data, API integration templates, and chatbot logic. Include comments and use modular design for easy extension. 
+You can mock data where needed, but structure everything to be easy to plug in real APIs later.
