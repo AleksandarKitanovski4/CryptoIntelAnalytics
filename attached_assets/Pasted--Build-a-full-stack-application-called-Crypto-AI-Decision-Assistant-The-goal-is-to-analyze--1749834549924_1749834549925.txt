@@ -1,0 +1,62 @@
+🎯 Build a full-stack application called **Crypto AI Decision Assistant**. The goal is to **analyze the market**, compare technical + sentiment + on-chain + global signals, and give an AI-generated opinion: **BUY**, **SELL**, or **WAIT** – then later check if that prediction was correct.
+
+---
+
+### ✅ Core Workflow:
+
+1. **User selects** a coin (e.g. BTC, ETH) and timeframe (e.g. 1h, 1d, 1w)
+
+2. The app:
+   - Fetches data from **multiple APIs** as needed:
+     - Technical indicators (RSI, MACD, etc.)
+     - Sentiment (Fear & Greed Index, Long/Short Ratio)
+     - On-chain (MVRV, Whale inflows, Exchange flows)
+     - Derivatives (Funding Rate, OI, Liquidations)
+     - Global news (if possible – macro indicators, e.g. from News API)
+   - **Compares and analyzes** signals using a rules engine or AI logic
+   - Generates one of three responses:
+     - ✅ BUY zone (bullish signal)
+     - 🔻 SELL zone (bearish signal)
+     - ⏳ WAIT (neutral or unclear)
+
+3. The **decision is saved to database**:
+   - Coin
+   - Timeframe
+   - Time of decision
+   - Indicators at that moment
+   - Final AI recommendation
+
+4. After X hours or days (based on timeframe), the app:
+   - Checks if price moved **in the predicted direction**
+   - Tags the prediction as ✅ CORRECT or ❌ WRONG
+   - Adds result to a **prediction history log**
+
+5. The app keeps a full **dashboard of predictions**:
+   - Table: Coin | Date | Prediction | Outcome | % change
+   - Summary:
+     - Total predictions
+     - % accuracy overall
+     - Accuracy per coin
+     - Accuracy per timeframe
+     - Charts or heatmaps to show AI performance
+
+---
+
+### 🧠 Optional Smart Behavior:
+- Train the AI assistant over time (rule-based or ML) to improve based on past wrong decisions
+- Detect and flag uncertain or conflicting signals
+- Let user ask: “Was your last prediction for ETH correct?”
+
+---
+
+### 📦 Tech Requirements:
+- Frontend (React or Vue)
+- Backend (Node.js, Python or Java – AI can choose best)
+- Scheduler for re-evaluation (cron, queue, or async task)
+- DB (PostgreSQL or MongoDB) for storing predictions + analysis
+- REST API endpoints for frontend queries
+- Admin/dashboard view for accuracy tracking
+
+---
+
+📌 Generate everything needed: backend logic, database schema, API integration plan, and modular folder structure. Include examples of how the system learns from its prediction accuracy.
