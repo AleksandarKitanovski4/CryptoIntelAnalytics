@@ -1,8 +1,10 @@
 import { 
-  users, coins, priceData, indicators, chatMessages, userPreferences,
+  users, coins, priceData, indicators, chatMessages, userPreferences, predictions, predictionResults, predictionMetrics,
   type User, type InsertUser, type Coin, type InsertCoin,
   type PriceData, type InsertPriceData, type Indicator, type InsertIndicator,
-  type ChatMessage, type InsertChatMessage, type UserPreferences, type InsertUserPreferences
+  type ChatMessage, type InsertChatMessage, type UserPreferences, type InsertUserPreferences,
+  type Prediction, type InsertPrediction, type PredictionResult, type InsertPredictionResult,
+  type PredictionMetrics, type InsertPredictionMetrics
 } from "@shared/schema";
 
 export interface IStorage {
@@ -36,6 +38,23 @@ export interface IStorage {
   getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
   createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
   updateUserPreferences(userId: number, updates: Partial<InsertUserPreferences>): Promise<UserPreferences | undefined>;
+
+  // Prediction methods
+  getPredictions(coinId?: number, status?: string, limit?: number): Promise<Prediction[]>;
+  getPrediction(id: number): Promise<Prediction | undefined>;
+  createPrediction(prediction: InsertPrediction): Promise<Prediction>;
+  updatePrediction(id: number, updates: Partial<InsertPrediction>): Promise<Prediction | undefined>;
+  getActivePredictions(): Promise<Prediction[]>;
+  getExpiredPredictions(): Promise<Prediction[]>;
+
+  // Prediction results
+  getPredictionResults(predictionId?: number): Promise<PredictionResult[]>;
+  createPredictionResult(result: InsertPredictionResult): Promise<PredictionResult>;
+
+  // Prediction metrics
+  getPredictionMetrics(coinId?: number, timeframe?: string): Promise<PredictionMetrics[]>;
+  createPredictionMetrics(metrics: InsertPredictionMetrics): Promise<PredictionMetrics>;
+  updatePredictionMetrics(id: number, updates: Partial<InsertPredictionMetrics>): Promise<PredictionMetrics | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -45,6 +64,9 @@ export class MemStorage implements IStorage {
   private indicators: Map<number, Indicator> = new Map();
   private chatMessages: Map<number, ChatMessage> = new Map();
   private userPreferences: Map<number, UserPreferences> = new Map();
+  private predictions: Map<number, Prediction> = new Map();
+  private predictionResults: Map<number, PredictionResult> = new Map();
+  private predictionMetrics: Map<number, PredictionMetrics> = new Map();
   
   private currentUserId = 1;
   private currentCoinId = 1;
@@ -52,6 +74,9 @@ export class MemStorage implements IStorage {
   private currentIndicatorId = 1;
   private currentChatMessageId = 1;
   private currentUserPreferencesId = 1;
+  private currentPredictionId = 1;
+  private currentPredictionResultId = 1;
+  private currentPredictionMetricsId = 1;
 
   constructor() {
     // Initialize with default coins
@@ -197,6 +222,104 @@ export class MemStorage implements IStorage {
     
     const updated: UserPreferences = { ...existing, ...updates };
     this.userPreferences.set(existing.id, updated);
+    return updated;
+  }
+
+  // Prediction methods
+  async getPredictions(coinId?: number, status?: string, limit = 50): Promise<Prediction[]> {
+    return Array.from(this.predictions.values())
+      .filter(prediction => 
+        (!coinId || prediction.coinId === coinId) &&
+        (!status || prediction.status === status)
+      )
+      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+      .slice(0, limit);
+  }
+
+  async getPrediction(id: number): Promise<Prediction | undefined> {
+    return this.predictions.get(id);
+  }
+
+  async createPrediction(insertPrediction: InsertPrediction): Promise<Prediction> {
+    const id = this.currentPredictionId++;
+    const prediction: Prediction = {
+      ...insertPrediction,
+      id,
+      status: "active",
+      createdAt: new Date(),
+      evaluatedAt: null
+    };
+    this.predictions.set(id, prediction);
+    return prediction;
+  }
+
+  async updatePrediction(id: number, updates: Partial<InsertPrediction>): Promise<Prediction | undefined> {
+    const prediction = this.predictions.get(id);
+    if (!prediction) return undefined;
+    
+    const updated: Prediction = { ...prediction, ...updates };
+    this.predictions.set(id, updated);
+    return updated;
+  }
+
+  async getActivePredictions(): Promise<Prediction[]> {
+    return Array.from(this.predictions.values())
+      .filter(prediction => prediction.status === "active");
+  }
+
+  async getExpiredPredictions(): Promise<Prediction[]> {
+    const now = new Date();
+    return Array.from(this.predictions.values())
+      .filter(prediction => 
+        prediction.status === "active" && 
+        new Date(prediction.expiresAt) <= now
+      );
+  }
+
+  // Prediction results
+  async getPredictionResults(predictionId?: number): Promise<PredictionResult[]> {
+    return Array.from(this.predictionResults.values())
+      .filter(result => !predictionId || result.predictionId === predictionId)
+      .sort((a, b) => new Date(b.evaluatedAt).getTime() - new Date(a.evaluatedAt).getTime());
+  }
+
+  async createPredictionResult(insertResult: InsertPredictionResult): Promise<PredictionResult> {
+    const id = this.currentPredictionResultId++;
+    const result: PredictionResult = {
+      ...insertResult,
+      id,
+      evaluatedAt: new Date()
+    };
+    this.predictionResults.set(id, result);
+    return result;
+  }
+
+  // Prediction metrics
+  async getPredictionMetrics(coinId?: number, timeframe?: string): Promise<PredictionMetrics[]> {
+    return Array.from(this.predictionMetrics.values())
+      .filter(metrics => 
+        (!coinId || metrics.coinId === coinId) &&
+        (!timeframe || metrics.timeframe === timeframe)
+      );
+  }
+
+  async createPredictionMetrics(insertMetrics: InsertPredictionMetrics): Promise<PredictionMetrics> {
+    const id = this.currentPredictionMetricsId++;
+    const metrics: PredictionMetrics = {
+      ...insertMetrics,
+      id,
+      lastUpdated: new Date()
+    };
+    this.predictionMetrics.set(id, metrics);
+    return metrics;
+  }
+
+  async updatePredictionMetrics(id: number, updates: Partial<InsertPredictionMetrics>): Promise<PredictionMetrics | undefined> {
+    const metrics = this.predictionMetrics.get(id);
+    if (!metrics) return undefined;
+    
+    const updated: PredictionMetrics = { ...metrics, ...updates, lastUpdated: new Date() };
+    this.predictionMetrics.set(id, updated);
     return updated;
   }
 }
