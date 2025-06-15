@@ -1,34 +1,19 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': import.meta.env.VITE_API_KEY
+// client/src/lib/api.ts
+export async function apiRequest<T = any>(
+  path: string,
+  payload: unknown
+): Promise<T> {
+  const base = import.meta.env.DEV
+    ? 'http://localhost:8081'    // твојот backend URL
+    : '';
+  const res = await fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`API error ${res.status}: ${text}`);
   }
-});
-
-export const analyzeMarket = async (coinSymbol: string, timeframe: string) => {
-  try {
-    const response = await api.get(`/api/analyze/${coinSymbol}/${timeframe}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error analyzing market:', error);
-    throw error;
-  }
-};
-
-export const getAccuracyStats = async (params: {
-  coinSymbol?: string;
-  timeframe?: string;
-  startDate?: string;
-  endDate?: string;
-}) => {
-  try {
-    const response = await api.get('/api/accuracy', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching accuracy stats:', error);
-    throw error;
-  }
-}; 
+  return res.json();
+}
